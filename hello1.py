@@ -1,4 +1,4 @@
 #!/usr/bin/env python3
 
-for letter in 'word':
+for lettter in 'word':
     print(letter)

@@ -1,0 +1,30 @@
+name: Use GitHub App
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/use-github-app.yml
+
+jobs:
+  checkout-other-repo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get Token
+        id: get_workflow_token
+        uses: peter-murray/workflow-application-token-action@v2
+        with:
+          application_id: ${{ vars.GH_APPLICATION_ID }}
+          application_private_key: ${{ secrets.GH_APPLICATION_KEY }}
+
+      - name: Debug - List Installations
+        run: |
+          curl -H "Authorization: Bearer ${{ steps.get_workflow_token.outputs.token }}" \
+               -H "Accept: application/vnd.github.v3+json" \
+               https://api.github.com/app/installations
+
+      - name: Checkout example-demo repository
+        uses: actions/checkout@v3
+        with:
+          repository: ahmetserhan/testrepo
+          token: ${{ steps.get_workflow_token.outputs.token }}
